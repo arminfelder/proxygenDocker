@@ -204,8 +204,43 @@ RUN mkdir /usr/local/lib/proxygen
 COPY --from=0 /home/install/lib/ /usr/local/lib/proxygen/
 COPY --from=0 /home/install/include/ /usr/local/include/
 
-RUN apt-get update && apt-get install -y libboost-all-dev libcap-dev libdouble-conversion-dev libevent-dev libgflags-dev libgoogle-glog-dev libkrb5-dev libpcre3-dev libpthread-stubs0-dev libnuma-dev libsasl2-dev libsnappy-dev libsqlite3-dev libssl-dev && apt-get clean
+RUN apt-get update && apt-get install -y libboost-all-dev \
+     libcap-dev \
+     libdouble-conversion-dev \
+     libevent-dev libgflags-dev \
+     libgoogle-glog-dev \
+     libkrb5-dev \
+     libpcre3-dev \
+     libpthread-stubs0-dev \
+     libnuma-dev \
+     libsasl2-dev \
+     libsnappy-dev \
+     libsqlite3-dev \
+     libssl-dev \
+     openssh-server \
+     cmake \
+     build-essential \
+     cppcheck \
+     rsync \
+     gdb \
+     valgrind \
+     clang-tools \
+    && apt-get clean
 
 RUN echo "/usr/local/lib/proxygen/" > /etc/ld.so.conf.d/proxygen.conf
 
 RUN ldconfig
+
+RUN mkdir /var/run/sshd
+
+RUN echo 'root:GaxahhohphuYea9cah4Od2equ0cui3eich4' | chpasswd
+
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
