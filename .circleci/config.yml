@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+      # login to registry
+      - run: |
+          export GIT_TAG=$(curl --silent https://api.github.com/repos/facebook/proxygen/tags | jq -r ".[0].name")
+      - run: |
+          echo "$dockerhub" | docker login --username $DOCKER_USER --password-stdin
+      # build the images
+      - run: docker build -t afelder/proxygen:${GIT_TAG} ./base-run
+      - run: docker build -t afelder/proxygen:${GIT_TAG}-build ./base-build
+      # deploy the images
+      - run: docker push afelder/proxygen:${GIT_TAG}
+      - run: docker push afelder/proxygen:${GIT_TAG}-build
