@@ -6,7 +6,7 @@ jobs:
       - checkout
       # login to registry
       - run: |
-          export GIT_TAG=$(curl --silent https://api.github.com/repos/facebook/proxygen/tags | jq -r ".[0].name")
+          echo export GIT_TAG=$(curl --silent https://api.github.com/repos/facebook/proxygen/tags | jq -r ".[0].name") >> "$BASH_ENV"
       - run: |
           echo "$dockerhub" | docker login --username $DOCKER_USER --password-stdin
       # build the images
