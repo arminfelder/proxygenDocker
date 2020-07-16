@@ -11,6 +11,7 @@ jobs:
           echo "$dockerhub" | docker login --username $DOCKER_USER --password-stdin
       # build the images
       - run: echo afelder/proxygen:${GIT_TAG}
+      - run: echo afelder/proxygen:${GIT_TAG}-build
       - run: docker build -t afelder/proxygen:${GIT_TAG} ./base-run
       - run: docker build -t afelder/proxygen:${GIT_TAG}-build ./base-build
       # deploy the images
