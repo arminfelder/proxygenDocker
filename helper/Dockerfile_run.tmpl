@@ -1,0 +1,16 @@
+${PROXYGEN_DOCKER}
+
+FROM ubuntu:18.04
+
+SHELL ["/bin/bash", "-c"]
+
+RUN mkdir /usr/local/lib/proxygen
+
+COPY --from=0 /home/install/lib/ /usr/local/lib/proxygen/
+COPY --from=0 /home/install/include/ /usr/local/include/
+
+RUN apt-get update && apt-get install -y libcap2 libdouble-conversion1 libevent-2.1-6 libgflags2.2 libgoogle-glog0v5 libkrb5-3 libpcre3 libnuma1 libsasl2-2 libsnappy1v5 libsqlite3-0 libssl1.1 && apt-get clean
+
+RUN echo "/usr/local/lib/proxygen/" > /etc/ld.so.conf.d/proxygen.conf
+
+RUN ldconfig

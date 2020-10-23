@@ -1,22 +1,15 @@
-FROM ubuntu:18.04
-ARG COMMIT_TAG
-
-RUN apt-get update && apt-get install -y git sudo
-
-WORKDIR /opt/
-RUN git clone https://github.com/facebook/proxygen
-WORKDIR /opt/proxygen/proxygen
-RUN git checkout ${COMMIT_TAG}
-RUN ./build.sh -j $(nproc)
-RUN ./install.sh
-
+${PROXYGEN_DOCKER}
 
 FROM ubuntu:18.04
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update && apt-get --no-install-recommends install -y libboost-all-dev \
-     cmake \
+RUN mkdir /usr/local/lib/proxygen
+
+COPY --from=0 /home/install/lib/ /usr/local/lib/proxygen/
+COPY --from=0 /home/install/include/ /usr/local/include/
+
+RUN apt-get update && apt-get install -y libboost-all-dev \
      libcap-dev \
      libdouble-conversion-dev \
      libevent-dev libgflags-dev \
@@ -26,18 +19,11 @@ RUN apt-get update && apt-get --no-install-recommends install -y libboost-all-de
      libpthread-stubs0-dev \
      libnuma-dev \
      libsasl2-dev \
-     libjemalloc-dev \
      libsnappy-dev \
      libsqlite3-dev \
-     libiberty-dev \
-     liblz4-dev \
-     liblzma-dev \
-     zlib1g-dev \
      libssl-dev \
-     libsnappy-dev \
-     libsodium-dev \
-     libzstd-dev \
      openssh-server \
+     cmake \
      build-essential \
      cppcheck \
      rsync \
@@ -46,7 +32,7 @@ RUN apt-get update && apt-get --no-install-recommends install -y libboost-all-de
      clang-tools \
     && apt-get clean
 
-COPY --from=0 /opt/proxygen/proxygen/_build /opt/proxygen/proxygen/_build/
+RUN echo "/usr/local/lib/proxygen/" > /etc/ld.so.conf.d/proxygen.conf
 
 RUN ldconfig
 
