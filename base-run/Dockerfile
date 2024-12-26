@@ -1,7 +1,7 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 ARG COMMIT_TAG
 
-RUN apt-get update && apt-get install -y git sudo
+RUN apt-get update && apt-get install -y git sudo lsb-release libfast-float-dev
 
 WORKDIR /opt/
 RUN git clone https://github.com/facebook/proxygen
@@ -11,15 +11,15 @@ RUN ./build.sh -j $(nproc)
 RUN ./install.sh
 
 
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get --no-install-recommends install -y libcap2 \
-    libdouble-conversion1 \
-    libevent-2.1-6 \
+    libdouble-conversion3 \
+    libevent-2.1-7 \
     libgflags2.2 \
-    libgoogle-glog0v5 \
+    libgoogle-glog0v6t64 \
     libkrb5-3 \
     libpcre3 \
     libnuma1 \
@@ -28,8 +28,9 @@ RUN apt-get update && apt-get --no-install-recommends install -y libcap2 \
     libsqlite3-0 \
     liblz4-1 \
     liblzma5 \
-    libssl1.1 \
-    libjemalloc1 \
+    libssl3t64 \
+    libjemalloc2 \
     libsodium23 && apt-get clean
 
 RUN ldconfig
+libssl
