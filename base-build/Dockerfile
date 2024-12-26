@@ -1,7 +1,7 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 ARG COMMIT_TAG
 
-RUN apt-get update && apt-get install -y git sudo
+RUN apt-get update && apt-get install -y git sudo lsb-release libfast-float-dev
 
 WORKDIR /opt/
 RUN git clone https://github.com/facebook/proxygen
@@ -11,7 +11,7 @@ RUN ./build.sh -j $(nproc)
 RUN ./install.sh
 
 
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 
 SHELL ["/bin/bash", "-c"]
 
